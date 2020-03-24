@@ -1,7 +1,7 @@
 {
   "name": "vue-sticky-header",
   "description": "vue粘性导航",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "author": "zhengzhigang",
   "license": "MIT",
   "private": false,
