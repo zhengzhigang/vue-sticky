@@ -1,4 +1,4 @@
-# vue-sticky
+# vue-sticky-header
 
 > vue粘性导航，rem布局，以750宽度设计稿为准
 > 插件只完成粘性功能，导航样式需要自己完成
@@ -12,7 +12,7 @@ npm install vue-sticky-header
 
 ### 全局使用
 ```js
-import sticky from './components/sticky'
+import sticky from 'vue-sticky-header'
 
 Vue.use(sticky)
 ```
