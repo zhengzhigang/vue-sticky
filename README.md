@@ -12,7 +12,7 @@ npm install vue-sticky-header
 
 ### 全局使用
 ```js
-import { sticky }  from './components/sticky'
+import sticky from './components/sticky'
 
 Vue.use(sticky)
 ```
