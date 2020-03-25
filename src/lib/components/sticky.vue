@@ -1,8 +1,14 @@
 <template>
-  <div :style="{height:(height * ratio) / 100+'rem',zIndex:zIndex}">
+  <div :style="{height:style.height,zIndex:style.zIndex}">
     <div
       :class="className"
-      :style="{top:(isSticky ? (stickyTop * ratio) / 100 +'rem' : ''),zIndex:zIndex,position:position,width:width,height:(height * ratio) / 100+'rem', background: background}"
+      :style="{
+        top: style.top,
+        zIndex: style.zIndex,
+        position: style.position,
+        width: style.width,
+        height: style.height,
+        background: style.background}"
     >
       <slot>
         <div>sticky</div>
@@ -15,13 +21,17 @@
 export default {
   name: 'sticky',
   props: {
+    isRem: {
+      type: Boolean,
+      default: true
+    },
     stickyTop: {
       type: Number,
       default: 0
     },
     zIndex: {
       type: Number,
-      default: 1
+      default: 1000
     },
     className: {
       type: String,
@@ -30,13 +40,55 @@ export default {
     background: {
       type: String,
       default: ''
+    },
+    viewport: {
+      type: Number,
+      default: 750
     }
   },
   computed: {
         ratio() {
-            return 750 / window.innerWidth
+            return this.viewport / window.innerWidth
+        },
+        style() {
+      let {
+        isRem,
+        height,
+        zIndex,
+        ratio,
+        isSticky,
+        stickyTop,
+        position,
+        width,
+        background
+      } = this
+      let s
+      if (isRem) {
+        s = {
+          height: (height * ratio) / 100+'rem',
+          zIndex: zIndex,
+          top: (isSticky ? (stickyTop * ratio) / 100 +'rem' : ''),
+          position:position,
+          width: width,
+          height: (height * ratio) / 100+'rem',
+          background: background
         }
-    },
+        console.log('*****', stickyTop, ratio)
+      } else {
+        s = {
+          height: height + 'px',
+          zIndex: zIndex,
+          top: isSticky ? stickyTop + 'px' : '',
+          position: position,
+          width: width,
+          height: height + 'px',
+          background: background
+        }
+      }
+
+      return s
+    }
+  },
   data() {
     return {
       active: false,

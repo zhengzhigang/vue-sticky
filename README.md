@@ -41,8 +41,11 @@ export default {
 
 
 ## Options
-* `background`: 吸顶导航背景色，默认透明
-* `zIndex` : 层级，默认1000
-* `stickyTop`: 吸顶距离顶部的位置，默认0
-* `zIndex`: 吸顶导航堆叠顺序
-* `className`: 内层box添加的类
+|  Attribute   | Description  |  Type  |  Accepted Values  |  Default  |
+|  ----------  | -----------  |  ----  |  ---------------  |  -------  |
+| background  | 吸顶导航背景色，默认透明 |  string  |  -   |  -  |
+| zIndex  |  层级，默认1000 |  |  number  |  -  |  1000  |
+| stickyTop  |  吸顶距离顶部的位置，默认0 |  number  |  -  |  0  |
+| className  |  内层box添加的类 |  string  |  -  |  -  |
+| isRem  |  是否使用rem布局  |  boolean  |  true/false  |  true  |
+| viewport  |  设计稿宽度  |  number  |  -  |  750  |

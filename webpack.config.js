@@ -1,12 +1,16 @@
 var path = require('path')
 var webpack = require('webpack')
 
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
+
 module.exports = {
-  entry: './src/index.js',
+  entry: process.env.NODE_ENV === 'development' ? './src/main.js' : './src/lib/index.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'sticky.js',
+    filename: process.env.NODE_ENV === 'development' ? 'build.js' : 'sticky.js',
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
@@ -73,14 +77,16 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve('src')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
   devServer: {
     historyApiFallback: true,
     noInfo: true,
-    overlay: true
+    overlay: true,
+    hot: true
   },
   performance: {
     hints: false
@@ -94,7 +100,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: 'production'
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
