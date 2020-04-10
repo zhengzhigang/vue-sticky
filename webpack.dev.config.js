@@ -1,26 +1,15 @@
 var path = require('path')
-var webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const portfinder = require('portfinder')
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 
-function resolve (dir) {
-  return path.join(__dirname, dir)
-}
-
-module.exports = {
-  mode: 'production',
-  entry: './src/lib/index.js',
+const devWebpackConfig = {
+  entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'sticky.js',
-    libraryTarget: 'umd',
-    umdNamedDefine: true
-  },
-  optimization: {
-    minimize: true,
-    nodeEnv: 'production',
-    concatenateModules: false
-  },
+    filename: 'build.js',
+  }, 
   module: {
     rules: [
       {
@@ -84,15 +73,44 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      'vue$': 'vue/dist/vue.esm.js'
     },
     extensions: ['*', '.js', '.vue', '.json']
+  },
+  devServer: {
+    historyApiFallback: true,
+    noInfo: true,
+    overlay: true,
+    port: 3111
   },
   performance: {
     hints: false
   },
+  devtool: '#eval-source-map',
   plugins: [
-    new VueLoaderPlugin(),
+    new VueLoaderPlugin()
   ]
 }
+
+module.exports = new Promise((resolve, reject) => {
+  portfinder.basePort = 3111
+  portfinder.getPort((err, port) => {
+      if (err) {
+          reject(err)
+      } else {
+          // publish the new Port, necessary for e2e tests
+          process.env.PORT = 3111
+          // add port to devServer config
+          devWebpackConfig.devServer.port = 3111
+
+          // Add FriendlyErrorsPlugin
+          devWebpackConfig.plugins.push(new FriendlyErrorsPlugin({
+              compilationSuccessInfo: {
+                  messages: [`Your application is running here: http://0.0.0.0:3111`],
+              }
+          }))
+
+          resolve(devWebpackConfig)
+      }
+  })
+})

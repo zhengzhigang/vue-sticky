@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import {sticky} from './lib/index'
+import sticky from './lib/components/sticky'
 export default {
   name: 'app',
   components: {
