@@ -7,10 +7,17 @@
     </ul>
     <sticky
       :stickyTop="40"
-      :isRem="false"
-      :background="'#37fafa'">
+      :background="'#37fafa'"
+      ref="stickyTab"
+    >
       <ul class="nav">
-        <li class="nav-item" v-for="(item, i) in nav" :key="i">{{item}}</li>
+        <li
+          class="nav-item"
+          v-for="(item, i) in nav"
+          :key="i"
+          :ref="'tab' + i"
+          @click="switchTab(i)"
+        >{{item}}</li>
       </ul>
     </sticky>
     <ul>
@@ -29,6 +36,17 @@ export default {
   data () {
     return {
       nav: ['导航一', '导航二', '导航三', '导航四']
+    }
+  },
+  mounted() {
+    var stickyTab = this.$refs.stickyTab
+    stickyTab.setUnderline(this.$refs['tab0'][0])
+  },
+
+  methods: {
+    switchTab(i) {
+      var stickyTab = this.$refs.stickyTab
+      stickyTab.setUnderline(this.$refs['tab' + i][0])
     }
   }
 }
@@ -55,6 +73,7 @@ ul {
 }
 
 .nav {
+  width: 100%;
   display: flex;
   margin: 0;
   padding: 0;

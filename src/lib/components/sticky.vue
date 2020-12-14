@@ -1,5 +1,5 @@
 <template>
-  <div :style="{height:style.height,zIndex:style.zIndex}">
+  <div :style="{height:height,zIndex:style.zIndex}">
     <div
       :class="className"
       :style="{
@@ -7,24 +7,31 @@
         zIndex: style.zIndex,
         position: style.position,
         width: style.width,
-        height: style.height,
         background: style.background}"
     >
-      <slot>
-        <div>sticky</div>
-      </slot>
+      <div v-if="showUnderLine" class="sticky-tab-scroll" ref="anchorTabScrollEl">
+          <div class="sticky-tab-group">
+              <slot></slot>
+              <div
+                class="sticky-base-line"
+                :style="{left: underLineLeft + 'px', ...underLineStyle}"
+                ref="underLineEl"
+              >
+                  <slot name="base-line">
+                      <span class="sticky-base-line__sty"></span>
+                  </slot>
+              </div>
+          </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import util from '../util'
 export default {
   name: 'sticky',
   props: {
-    isRem: {
-      type: Boolean,
-      default: true
-    },
     stickyTop: {
       type: Number,
       default: 0
@@ -41,52 +48,33 @@ export default {
       type: String,
       default: ''
     },
-    viewport: {
-      type: Number,
-      default: 750
+    showUnderLine: {
+      type: Boolean,
+      default: true
+    },
+    underLineStyle: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
-        ratio() {
-            return this.viewport / window.innerWidth
-        },
-        style() {
+    style() {
       let {
-        isRem,
-        height,
         zIndex,
-        ratio,
         isSticky,
         stickyTop,
         position,
         width,
         background
       } = this
-      let s
-      if (isRem) {
-        s = {
-          height: (height * ratio) / 100+'rem',
-          zIndex: zIndex,
-          top: (isSticky ? (stickyTop * ratio) / 100 +'rem' : ''),
-          position:position,
-          width: width,
-          height: (height * ratio) / 100+'rem',
-          background: background
-        }
-        console.log('*****', stickyTop, ratio)
-      } else {
-        s = {
-          height: height + 'px',
-          zIndex: zIndex,
-          top: isSticky ? stickyTop + 'px' : '',
-          position: position,
-          width: width,
-          height: height + 'px',
-          background: background
-        }
-      }
 
-      return s
+      return  {
+        zIndex: zIndex,
+        top: isSticky ? stickyTop + 'px' : '',
+        position:position,
+        width: width,
+        background: background
+      }
     }
   },
   data() {
@@ -95,11 +83,12 @@ export default {
       position: '',
       width: undefined,
       height: undefined,
-      isSticky: false
+      isSticky: false,
+      underLineLeft: null
     }
   },
   mounted() {
-    this.height = this.$el.getBoundingClientRect().height
+    this.height = this.$el.getBoundingClientRect().height + 'px'
     window.addEventListener('scroll', this.handleScroll)
     window.addEventListener('resize', this.handleResize)
   },
@@ -146,7 +135,49 @@ export default {
       if (this.isSticky) {
         this.width = this.$el.getBoundingClientRect().width + 'px'
       }
+    },
+
+    /**
+     * 设置基线位置
+     */
+    setUnderline(targetEl) {
+      if (!targetEl) return
+      const offsetLeft = targetEl.offsetLeft
+      const width = util.getStyle(targetEl, 'width')
+      const underLineWidth = util.getStyle(this.$refs.underLineEl, 'width')
+      let difference = width - underLineWidth
+      if (width < underLineWidth) {
+          difference = underLineWidth - width
+      }
+      this.underLineLeft = offsetLeft + difference / 2
     }
   }
 }
 </script>
+<style scoped>
+.sticky-tab-scroll {
+    display: flex;
+    width: 100%;
+    box-sizing: content-box;
+    align-items: center;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+.sticky-tab-group {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+.sticky-base-line {
+    position: absolute;
+    bottom: 5px;
+    transition: left .2s ease-in-out;
+}
+.sticky-base-line__sty {
+    display: block;
+    width: 18px;
+    height: 3px;
+    background: #4abab4;
+    border-radius: 3px;
+}
+</style>

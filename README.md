@@ -19,24 +19,60 @@ Vue.use(sticky)
 
 ### 页面内使用
 ```js
-template>
+<template>
   <div id="app">
-    <sticky :stickyTop="90">
-        <div v-for="item in ['nav1', 'nav2', 'nav3']">{{ item }}</div>
+    <ul>
+      <ul>
+        <li v-for="item in 8" :key="item">{{item}}</li>
+      </ul>
+    </ul>
+    <sticky
+      :stickyTop="40"
+      :background="'#37fafa'"
+      ref="stickyTab"
+    >
+      <ul class="nav">
+        <li
+          class="nav-item"
+          v-for="(item, i) in nav"
+          :key="i"
+          :ref="'tab' + i"
+          @click="switchTab(i)"
+        >{{item}}</li>
+      </ul>
     </sticky>
+    <ul>
+      <li v-for="item in 30" :key="item">{{item}}</li>
+    </ul>
   </div>
 </template>
 
 <script>
-import { sticky } from 'vue-sticky-header'
-
+import sticky from './lib/components/sticky'
 export default {
   name: 'app',
   components: {
     sticky
+  },
+  data () {
+    return {
+      nav: ['导航一', '导航二', '导航三', '导航四']
+    }
+  },
+  mounted() {
+    var stickyTab = this.$refs.stickyTab
+    stickyTab.setUnderline(this.$refs['tab0'][0])
+  },
+
+  methods: {
+    switchTab(i) {
+      var stickyTab = this.$refs.stickyTab
+      stickyTab.setUnderline(this.$refs['tab' + i][0])
+    }
   }
 }
 </script>
+
 ```
 
 
@@ -47,5 +83,10 @@ export default {
 | zIndex  |  层级，默认1000 |  |  number  |  -  |  1000  |
 | stickyTop  |  吸顶距离顶部的位置，默认0 |  number  |  -  |  0  |
 | className  |  内层box添加的类 |  string  |  -  |  -  |
-| isRem  |  是否使用rem布局  |  boolean  |  true/false  |  true  |
-| viewport  |  设计稿宽度  |  number  |  -  |  750  |
+| showUnderLine  |  是否展示基线 |  boolean  |  true/false  |  true  |
+
+
+## methods
+|  Methods   | Description  |
+|  ----------  | -----------  |
+| setUnderline  | 设置基线位置，接收一个参数：点击的当前tab的实例元素 |
